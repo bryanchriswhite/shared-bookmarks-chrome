@@ -86,16 +86,26 @@ gulp.task('chromeManifest', () => {
 });
 
 gulp.task('babel', () => {
-  return gulp.src('app/scripts.babel/indexes/**/*.js')
+  return gulp.src('app/scripts.babel/**/*.js')
       .pipe($.babel({
         presets: ['react', 'stage-0']
       }))
-      .pipe(gulp.dest('app/scripts'));
+      .pipe(gulp.dest('app/scripts/babel.out/'));
+});
+
+gulp.task('browserify', function() {
+  // Single entry point to browserify
+  gulp.src('app/scripts/babel.out/indexes/**/*.js')
+    .pipe($.browserify({
+      insertGlobals : true,
+      debug : !gulp.env.production
+    }))
+    .pipe(gulp.dest('app/scripts/'))
 });
 
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
-gulp.task('watch', ['lint', 'babel'], () => {
+gulp.task('watch', ['babel', 'browserify'], () => {
   $.livereload.listen();
 
   gulp.watch([
@@ -106,7 +116,7 @@ gulp.task('watch', ['lint', 'babel'], () => {
     'app/_locales/**/*.json'
   ]).on('change', $.livereload.reload);
 
-  gulp.watch('app/scripts.babel/**/*.js', ['lint', 'babel']);
+  gulp.watch('app/scripts.babel/**/*.js', ['babel', 'browserify']);
   gulp.watch('bower.json', ['wiredep']);
 });
 
@@ -131,7 +141,7 @@ gulp.task('package', function () {
 
 gulp.task('build', (cb) => {
   runSequence(
-    'lint', 'babel', 'chromeManifest',
+    'lint', 'babel', 'browserify', 'chromeManifest',
     ['html', 'images', 'extras'],
     'size', cb);
 });

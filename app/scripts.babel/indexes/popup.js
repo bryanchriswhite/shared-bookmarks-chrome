@@ -1,8 +1,8 @@
 'use strict';
 
-require('react');
-require('react-dom');
-require('./containers/bookmark-manager');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import BookmarkManager from '../containers/bookmark-manager';
 
 ReactDOM.render(
   <BookmarkManager />,
