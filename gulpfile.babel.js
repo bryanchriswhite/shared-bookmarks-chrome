@@ -29,8 +29,14 @@ function lint(files, options) {
 }
 
 gulp.task('lint', lint('app/scripts.babel/**/*.js', {
+  plugins: ['react'],
   env: {
     es6: true
+  },
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    }
   }
 }));
 
@@ -80,9 +86,9 @@ gulp.task('chromeManifest', () => {
 });
 
 gulp.task('babel', () => {
-  return gulp.src('app/scripts.babel/**/*.js')
+  return gulp.src('app/scripts.babel/indexes/**/*.js')
       .pipe($.babel({
-        presets: ['es2015']
+        presets: ['react', 'stage-0']
       }))
       .pipe(gulp.dest('app/scripts'));
 });
