@@ -2,9 +2,13 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import BookmarkManager from '../containers/bookmark-manager';
+import BookmarkNode from '../containers/bookmark-node';
 
-ReactDOM.render(
-  <BookmarkManager />,
-  document.getElementById('app')
-);
+chrome.bookmarks.getTree(bookmarkTree => {
+  window.b = bookmarkTree;
+  console.log(bookmarkTree);
+  ReactDOM.render(
+    <BookmarkNode {...bookmarkTree[0]} />,
+    document.getElementById('app')
+  );
+});
